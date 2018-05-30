@@ -1,0 +1,1 @@
+An API for data from the Correlates of War project.
