@@ -1,0 +1,2 @@
+graft cowapi/templates
+global-exclude *.pyc
