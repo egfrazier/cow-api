@@ -37,9 +37,6 @@ def create_app(test_config=None):	# Application factory function
 	from cowapi.models import db
 	db.init_app(app)
 
-	from cowapi.views import db_test
-	app.register_blueprint(views.db_test.bp)
-
 	from cowapi.views import resources
 	app.register_blueprint(views.resources.bp)
 

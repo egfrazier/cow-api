@@ -6,6 +6,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from cowapi.models.db import get_db
+from cowapi.models.models import State, Query
 import pymysql.cursors
 
 from pprint import pprint
@@ -13,20 +14,18 @@ from pprint import pprint
 # Resource blueprint
 bp = Blueprint('resources', __name__, url_prefix='/resources')
 
-#Single State
+# State
 @bp.route('/state/<int:state_id>')
 def query_state(state_id):
-	db = get_db()
-	with g.db.cursor() as cursor:
-		sql = "SELECT * FROM `state_codes` WHERE state_id = %d" % state_id
-		cursor.execute(sql)
-		return str(cursor.fetchall())
+	thisQuery = Query('state', state_id)
+	thisQuery.send_query()
+	response = thisQuery.pull_result()
+	return render_template('response.html', response=response)
 
-# All States
+# States
 @bp.route('/states')
 def query_states():
-	db = get_db()
-	with g.db.cursor() as cursor:
-		sql = "SELECT * FROM `state_codes`"
-		cursor.execute(sql)
-		return str(cursor.fetchall())
+	thisQuery = Query('states')
+	thisQuery.send_query()
+	response = thisQuery.pull_result()
+	return render_template('response.html', response=response)
