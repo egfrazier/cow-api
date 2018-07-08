@@ -12,7 +12,7 @@ import pymysql.cursors
 from pprint import pprint
 
 # Resource blueprint
-bp = Blueprint('resources', __name__, url_prefix='/resources')
+bp = Blueprint('resources', __name__, url_prefix='/api/v1/resources')
 
 # State
 @bp.route('/state/<int:state_id>')

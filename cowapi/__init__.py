@@ -26,11 +26,6 @@ def create_app(test_config=True):	# Application factory function
 	def basic_info():
 		return 'Welcome to the Correlates of War API.'
 
-	# Return data for all states
-	@app.route('/api/v1/resources/states')
-	def states_api():
-		return 'Returns basic data for all states that have been in the system'
-
 	from cowapi.models import db
 	db.init_app(app)
 
