@@ -2,18 +2,15 @@ import os
 
 from flask import Flask
 
-def create_app(test_config=None):	# Application factory function
+def create_app(test_config=True):	# Application factory function
 	#create and configure the app
 	app = Flask('cowapi', instance_relative_config=True)
-	app.config.from_mapping(
-		SECRET_KEY='dev'
-	)
 
 	if test_config is None:
 		app.config.from_pyfile('config.py', silent=True)
 	else:
 		# load the test config if passed in
-		app.config.from_mapping(test_config)
+		app.config.from_pyfile('test_config.py', silent=True)
 
 	# ensure the instance folder exists
 	try:
