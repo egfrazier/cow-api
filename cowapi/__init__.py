@@ -2,7 +2,7 @@ import os
 
 from flask import Flask
 
-def create_app(test_config=True):	# Application factory function
+def create_app(test_config=None):	# Application factory function
 	#create and configure the app
 	app = Flask('cowapi', instance_relative_config=True)
 
