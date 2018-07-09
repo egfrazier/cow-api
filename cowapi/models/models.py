@@ -39,9 +39,7 @@ class Query:
 				else:
 					for row in result:
 						self.result_body['results'].append(row)
-				print(type(self.result_body))
 				self.result_body = json.dumps(self.result_body)
-				print(type(self.result_body))
 
 	def pull_result(self):
 		return self.result_body

@@ -13,28 +13,25 @@ def get_db():
 	                             db=app.config['DB'],
 	                             charset=app.config['CHARSET'],
 	                             cursorclass=pymysql.cursors.DictCursor)
-		return g.db
+	g_db_dump = dir(g.db)
+	print(g_db_dump)
+	return g.db
 
 def close_db(e=None):
 	db = g.pop('db', None)
 
 	if db is not None:
-		g.db.close()
+		db.close()
 
 def init_db():
     db = get_db()
 
 def init_app(app):
+	app.teardown_appcontext(close_db)
 	app.cli.add_command(init_db_command)
-	#app.teardown_appcontext(close_db)
 
 @click.command('init-db')
 @with_appcontext
 def init_db_command():
-	# In the Flaskr tutorial the init_db_command function would also contain code to
-	# initially set up the Sqlite database, but that code is omited since
-	# this database exists/persists independently on MySQL before, during and
-	# after the app is started. Therefore, init_db_command funtion only contains
-	# code to start a connection to the MySQL database.
 	init_db()
 	click.echo('Connecting to database...')
