@@ -5,6 +5,8 @@ from flask import (
 	Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
+# CONSIDER: Renaming resource_id to resource_value
+
 class Query:
 	def __init__(self, resource_name, resource_id=None, result_body=None):
 		self.resource_name = resource_name
@@ -60,6 +62,23 @@ class Query:
 						self.result_body = {"results": {"State Name" : thisState.state_name, "State ID" : thisState.state_id, "State Abbr": thisState.state_abbr, "System Tenure": thisState.system_tenure}}
 
 		# TODO: Query for System Membership, by year.
+		if self.resource_name == 'system_year':
+			this_year = System_year(self.resource_id)
+			db = get_db()
+			with g.db.cursor() as cursor:
+				sql = "SELECT state_codes.state_id, state_abbr, state_name FROM system_year INNER JOIN state_codes ON state_codes.state_id=system_year.state_id WHERE system_year=%d;" % this_year.year
+				cursor.execute(sql)
+				result = cursor.fetchall()
+				if cursor.rowcount == 0:
+					self.result_body = {"results" : "No results"}
+				else:
+					for row in result:
+						state_id = row['state_id']
+						state_name = row['state_abbr']
+						state_abbr = row['state_name']
+						system_list_item = {"state_id": state_id, "state_abbr": state_abbr, "state_name": state_name}
+						this_year.system_list.append(system_list_item)
+					self.result_body = {"results": {"year": this_year.year, "system_list": this_year.system_list}}
 
 	def pull_result(self):
 		return self.result_body
@@ -93,6 +112,30 @@ class State:
 			endmonth: 01,
 			endday:01,
 			isMajor: True
+			}
+		]
+	}
+}
+'''
+
+class System_year:
+	def __init__(self, year):
+		self.year = year
+		self.system_list = []
+'''
+{
+	"results": {
+		"year": XXXX,
+		"system_list": [
+			{
+				"state_id": 2,
+				"state_abbr": "USA",
+				"state_name": "United States of America"
+			},
+			{
+				"state_id": 20,
+				"state_abbr": "CAN",
+				"state_name": "Canada"
 			}
 		]
 	}

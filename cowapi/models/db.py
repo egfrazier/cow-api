@@ -14,7 +14,6 @@ def get_db():
 	                             charset=app.config['CHARSET'],
 	                             cursorclass=pymysql.cursors.DictCursor)
 	g_db_dump = dir(g.db)
-	print(g_db_dump)
 	return g.db
 
 def close_db(e=None):

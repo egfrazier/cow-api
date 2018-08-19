@@ -6,7 +6,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from cowapi.models.db import get_db
-from cowapi.models.models import State, Query
+from cowapi.models.models import State, Query, System_year
 import pymysql.cursors
 
 from pprint import pprint
@@ -70,4 +70,20 @@ def major_tenure(state_id):
 	thisQuery = Query('system_tenure', state_id)
 	thisQuery.send_query()
 	response = thisQuery.pull_result()
+	return render_template('response.html', response=response)
+
+
+@bp.route('/system_year/<int:year>')
+def system_year(year):
+	""" This function returns a JSON representation
+		response of a list of all members of the
+		international state system for a given year.
+		
+		TODO: Add a Boolean property identifying whether
+		the state was or was not a Major Power that
+		year.
+	"""
+	this_query = Query('system_year', year)
+	this_query.send_query()
+	response = this_query.pull_result()
 	return render_template('response.html', response=response)
