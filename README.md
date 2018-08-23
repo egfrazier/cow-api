@@ -2,7 +2,7 @@
 
 ## A RESTful Application Programming interface for data sets from the Correlates of War project.
 
-The Correlates of War data set is a collection of global conflict data dating back 1816. The project was founded in 1963 at the University of Michigan. Currently the data is available as downloadable CSV files from correlatesofwar.org. The purpose of the COW API project is to make this data accessible via RESTful API so that it can be accessed progromatically.
+The Correlates of War data set is a collection of global conflict data dating back 1816. The project was founded in 1963 at the University of Michigan. Currently the data is available as downloadable CSV files from correlatesofwar.org. The purpose of the COW API project is to make this data accessible via RESTful API so that it can be accessed progromatically. This is a personal project to improve my API design/development skills. It is not affilated with the Correlates of War project maintainers.
 
 Endpoints (in progress):
 * /api/v1/resources/state/{state id number}
