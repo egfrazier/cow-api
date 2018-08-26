@@ -87,3 +87,28 @@ def system_year(year):
 	this_query.send_query()
 	response = this_query.pull_result()
 	return render_template('response.html', response=response)
+
+# TODO: Future resources:
+	# - All intra state Wars
+	# - Intrastate wars by ID
+	# - All interstate wars
+	# - Interstate wars by ID
+	# - All extra state wars
+	# - Extrastate wars by ID
+
+@bp.route('/wars/nonstate/', defaults={'req_war_id': None})
+@bp.route('/wars/nonstate/<int:req_war_id>')
+def query_nonstate_wars(req_war_id):
+	""" This function returns a JSON representation
+		response of a nonstate war. If no war_id
+		argument is passed in, then all nonstate wars
+		are returned.
+	"""
+	this_query = Query('nonstate', req_war_id)
+	this_query.send_query()
+	response = this_query.pull_result()
+	return render_template('response.html', response=response)
+
+
+
+# TODO: Basic search query string funcionality on each of these endpoints
