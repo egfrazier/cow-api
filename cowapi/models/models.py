@@ -112,14 +112,14 @@ class Query:
 																"side_a": this_war.combatants['side_a'],
 																"side_b": this_war.combatants['side_b']
 															},
-															"timeline": [{
-																"styear": this_war.timeline[0]['styear'],
-																"stmonth": this_war.timeline[0]['stmonth'],
-																"stday": this_war.timeline[0]['stday'],
-																"endyear": this_war.timeline[0]['endyear'],
-																"endmonth": this_war.timeline[0]['endmonth'],
-																"endday": this_war.timeline[0]['endday'],
-															}],
+															"timeline": {
+																"styear": this_war.timeline['styear'],
+																"stmonth": this_war.timeline['stmonth'],
+																"stday": this_war.timeline['stday'],
+																"endyear": this_war.timeline['endyear'],
+																"endmonth": this_war.timeline['endmonth'],
+																"endday": this_war.timeline['endday'],
+															},
 															"deaths": {
 																"side_a_deaths": this_war.deaths['side_a_deaths'],
 																"side_b_deaths": this_war.deaths['side_b_deaths'],
@@ -127,6 +127,172 @@ class Query:
 															}
 															})
 
+		if self.resource_name == 'intrastate':
+			db = get_db()
+			with g.db.cursor() as cursor:
+				if self.resource_id is None:
+					sql = "SELECT * FROM `intra_state_wars_list`;"
+					cursor.execute(sql)
+					result = cursor.fetchall()
+				elif self.resource_id is not None:
+					sql = "SELECT * FROM `intra_state_wars_list` WHERE war_id = %s;" % self.resource_id
+					cursor.execute(sql)
+					result = cursor.fetchall()
+				if cursor.rowcount == 0:
+					self.result_body = {"results" : "No results"}
+				else:
+					self.result_body = {"results" : []}
+					for row in result:
+						this_war = War(self.resource_name, row)
+						this_war.set_war_meta(row)
+						self.result_body["results"].append({"meta":{ 
+																"war_id": this_war.meta["war_id"], 
+																"war_name": this_war.meta["war_name"],
+																"war_type": this_war.meta["war_type"], 
+																"war_location": this_war.meta["war_location"], 
+																"initiator": this_war.meta["initiator"], 
+																"trans_from": this_war.meta["trans_from"], 
+																"trans_to": this_war.meta["trans_to"], 
+																"outcome": this_war.meta["outcome"]
+															},
+															"combatants": {
+																"side_a": this_war.combatants['side_a'],
+																"side_b": this_war.combatants['side_b']
+															},
+															"timeline": [
+																{
+																	"styear1": this_war.timeline[0]['styear1'],
+																	"stmonth1": this_war.timeline[0]['stmonth1'],
+																	"stday1": this_war.timeline[0]['stday1'],
+																	"endyear1": this_war.timeline[0]['endyear1'],
+																	"endmonth1": this_war.timeline[0]['endmonth1'],
+																	"endday1": this_war.timeline[0]['endday1']
+																},
+																{
+																	"styear2": this_war.timeline[1]['styear2'],
+																	"stmonth2": this_war.timeline[1]['stmonth2'],
+																	"stday2": this_war.timeline[1]['stday2'],
+																	"endyear2": this_war.timeline[1]['endyear2'],
+																	"endmonth2": this_war.timeline[1]['endmonth2'],
+																	"endday2": this_war.timeline[1]['endday2']
+																}
+															],
+															"deaths": {
+																"side_a_deaths": this_war.deaths['side_a_deaths'],
+																"side_b_deaths": this_war.deaths['side_b_deaths']
+															}
+															})
+
+		if self.resource_name == 'interstate':
+			db = get_db()
+			with g.db.cursor() as cursor:
+				if self.resource_id is None:
+					sql = "SELECT * FROM `inter_state_wars_list`;"
+					cursor.execute(sql)
+					result = cursor.fetchall()
+				elif self.resource_id is not None:
+					sql = "SELECT * FROM `inter_state_wars_list` WHERE war_id = %s;" % self.resource_id
+					cursor.execute(sql)
+					result = cursor.fetchall()
+				if cursor.rowcount == 0:
+					self.result_body = {"results" : "No results"}
+				else:
+					self.result_body = {"results" : []}
+					for row in result:
+						this_war = War(self.resource_name, row)
+						this_war.set_war_meta(row)
+						self.result_body["results"].append({"meta":{ 
+																"war_id": this_war.meta["war_id"], 
+																"war_name": this_war.meta["war_name"],
+																"war_type": this_war.meta["war_type"], 
+																"war_location": this_war.meta["war_location"], 
+																"initiator": this_war.meta["initiator"], 
+																"trans_from": this_war.meta["trans_from"], 
+																"trans_to": this_war.meta["trans_to"], 
+																"outcome": this_war.meta["outcome"],
+																# Consider moving to 'combatants section'
+																"side_id": this_war.meta['side_id'],
+																"state_id": this_war.meta['state_id'],
+																"state_name": this_war.meta['state_name']
+															},
+															"timeline": [
+																{
+																	"styear1": this_war.timeline[0]['styear1'],
+																	"stmonth1": this_war.timeline[0]['stmonth1'],
+																	"stday1": this_war.timeline[0]['stday1'],
+																	"endyear1": this_war.timeline[0]['endyear1'],
+																	"endmonth1": this_war.timeline[0]['endmonth1'],
+																	"endday1": this_war.timeline[0]['endday1']
+																},
+																{
+																	"styear2": this_war.timeline[1]['styear2'],
+																	"stmonth2": this_war.timeline[1]['stmonth2'],
+																	"stday2": this_war.timeline[1]['stday2'],
+																	"endyear2": this_war.timeline[1]['endyear2'],
+																	"endmonth2": this_war.timeline[1]['endmonth2'],
+																	"endday2": this_war.timeline[1]['endday2']
+																}
+															],
+															"deaths": {
+																"total_combat_deaths": this_war.deaths['total_combat_deaths']
+															}
+															})
+
+		if self.resource_name == 'extrastate':
+			db = get_db()
+			with g.db.cursor() as cursor:
+				if self.resource_id is None:
+					sql = "SELECT * FROM `extra_state_wars_list`;"
+					cursor.execute(sql)
+					result = cursor.fetchall()
+				elif self.resource_id is not None:
+					sql = "SELECT * FROM `extra_state_wars_list` WHERE war_id = %s;" % self.resource_id
+					cursor.execute(sql)
+					result = cursor.fetchall()
+				if cursor.rowcount == 0:
+					self.result_body = {"results" : "No results"}
+				else:
+					self.result_body = {"results" : []}
+					for row in result:
+						this_war = War(self.resource_name, row)
+						this_war.set_war_meta(row)
+						self.result_body["results"].append({"meta":{ 
+																"war_id": this_war.meta["war_id"], 
+																"war_name": this_war.meta["war_name"],
+																"war_type": this_war.meta["war_type"], 
+																"war_location": this_war.meta["war_location"], 
+																"initiator": this_war.meta["initiator"], 
+																"trans_from": this_war.meta["trans_from"], 
+																"trans_to": this_war.meta["trans_to"], 
+																"outcome": this_war.meta["outcome"],
+																"was_intervention": this_war.meta['was_intervention']
+															},
+															"combatants": {
+																"side_a": this_war.combatants['side_a'],
+																"side_b": this_war.combatants['side_b']
+															},
+															"timeline": [
+																{
+																	"styear1": this_war.timeline[0]['styear1'],
+																	"stmonth1": this_war.timeline[0]['stmonth1'],
+																	"stday1": this_war.timeline[0]['stday1'],
+																	"endyear1": this_war.timeline[0]['endyear1'],
+																	"endmonth1": this_war.timeline[0]['endmonth1'],
+																	"endday1": this_war.timeline[0]['endday1']
+																},
+																{
+																	"styear2": this_war.timeline[1]['styear2'],
+																	"stmonth2": this_war.timeline[1]['stmonth2'],
+																	"stday2": this_war.timeline[1]['stday2'],
+																	"endyear2": this_war.timeline[1]['endyear2'],
+																	"endmonth2": this_war.timeline[1]['endmonth2'],
+																	"endday2": this_war.timeline[1]['endday2']
+																}
+															],
+															"deaths": {
+																"total_combat_deaths": this_war.deaths['total_combat_deaths']
+															}
+															})
 
 
 
@@ -152,33 +318,71 @@ class War:
 		self.meta['trans_from'] = row['trans_from']
 		self.meta['trans_to'] = row['trans_to']
 		self.meta['outcome'] = row['outcome']
+		if self.meta['war_type'] == 'intrastate':
+			self.meta['is_interationalized'] = row['is_internationalized']
+		if self.meta['war_type'] == 'interstate':
+			self.meta['side_id'] = row['side_id']
+			self.meta['state_id'] = row['state_id']
+			self.meta['state_name'] = row['state_name']
+		if self.meta['war_type'] == 'extrastate':
+			self.meta['was_intervention'] = row['was_intervention']
 
 
 	def set_war_combatants(self, row):
-		self.combatants['side_a'] = [row['side_a1'], row['side_a2']]
-		self.combatants['side_b'] = [row['side_b1'], row['side_b2'], row['side_b3'], row['side_b4'], row['side_b5']]
+		if self.meta['war_type'] == 'nonstate':
+			self.combatants['side_a'] = [row['side_a1'], row['side_a2']]
+			self.combatants['side_b'] = [row['side_b1'], row['side_b2'], row['side_b3'], row['side_b4'], row['side_b5']]
+		elif self.meta['war_type'] in ['intrastate', 'extrastate']:
+			self.combatants['side_a'] = {'side_a_id': row['side_a_id'], 'side_a_name': row['side_a_name']}
+			self.combatants['side_b'] = {'side_b_id': row['side_b_id'], 'side_b_name': row['side_b_name']}
 
 	def set_nonstate_war_timeline(self, row):
-		self.timeline.append({
-							'styear': row['styear'], 
-							'stmonth': row['stmonth'],
-							'stday': row['stday'],
-							'endyear': row['endyear'],
-							'endmonth': row['endmonth'],
-							'endday': row['endday']
-							})
+		if self.meta['war_type'] == 'nonstate':
+			self.timeline = {
+								'styear': row['styear'], 
+								'stmonth': row['stmonth'],
+								'stday': row['stday'],
+								'endyear': row['endyear'],
+								'endmonth': row['endmonth'],
+								'endday': row['endday']
+								}
+		elif self.meta['war_type'] in ['intrastate','interstate', 'extrastate']:
+			self.timeline = [
+								{
+								'styear1': row['styear1'], 
+								'stmonth1': row['stmonth1'],
+								'stday1': row['stday1'],
+								'endyear1': row['endyear1'],
+								'endmonth1': row['endmonth1'],
+								'endday1': row['endday1']
+								},
+								{
+								'styear2': row['styear2'], 
+								'stmonth2': row['stmonth2'],
+								'stday2': row['stday2'],
+								'endyear2': row['endyear2'],
+								'endmonth2': row['endmonth2'],
+								'endday2': row['endday2']
+								}
+							]
 
 	def set_war_deaths(self, row):
-		self.deaths['side_a_deaths'] = row['side_a_deaths']
-		self.deaths['side_b_deaths'] = row['side_b_deaths']
-		self.deaths['total_combat_deaths'] = row['total_combat_deaths']
+		if self.meta['war_type'] in ['nonstate']:
+			self.deaths['side_a_deaths'] = row['side_a_deaths']
+			self.deaths['side_b_deaths'] = row['side_b_deaths']
+			self.deaths['total_combat_deaths'] = row['total_combat_deaths']
+		if self.meta['war_type'] in ['intrastate']:
+			self.deaths['side_a_deaths'] = row['side_a_deaths']
+			self.deaths['side_b_deaths'] = row['side_b_deaths']
+		if self.meta['war_type'] in ['interstate', 'extrastate']:
+			self.deaths['total_combat_deaths'] = row['combat_deaths']
 
 
 	def __init__(self, war_type, row):
 		self.meta = {}
 		self.meta['war_type'] = war_type
 		self.combatants = {}
-		self.timeline = []
+		self.timeline = {}
 		self.deaths = {}
 		self.set_war_meta(row)
 		self.set_war_combatants(row)
