@@ -10,11 +10,13 @@ from cowapi.models.models import State, Query, System_year
 import pymysql.cursors
 
 from pprint import pprint
+import json
+from flask import jsonify
 
 # Resource blueprint
 bp = Blueprint('resources', __name__, url_prefix='/api/v1/resources')
 
-
+# State
 @bp.route('/state/<int:state_id>')
 def query_state(state_id):
 	""" This function returns a JSON represntation
@@ -27,7 +29,8 @@ def query_state(state_id):
 	thisQuery = Query('state', state_id)
 	thisQuery.send_query()
 	response = thisQuery.pull_result()
-	return render_template('response.html', response=response)
+	return jsonify(response)
+	#return render_template('response.html', response=response)
 
 # States
 @bp.route('/states')
@@ -35,7 +38,8 @@ def query_states():
 	thisQuery = Query('states')
 	thisQuery.send_query()
 	response = thisQuery.pull_result()
-	return render_template('response.html', response=response)
+	return jsonify(response)
+	#return render_template('response.html', response=response)
 
 # System membership tenure for a Given State
 @bp.route('/system_tenure/<int:state_id>')
@@ -52,26 +56,8 @@ def system_tenure(state_id):
 	thisQuery = Query('system_tenure', state_id)
 	thisQuery.send_query()
 	response = thisQuery.pull_result()
-	return render_template('response.html', response=response)
-
-# Major Power Tenure for a Given State
-@bp.route('/major_tenure/<int:state_id>')
-def major_tenure(state_id):
-	""" This function returns a JSON representation
-		response of the Major tenure for a given
-		state (by state_id) and designates any tenure
-		where the state was a Major Power.
-
-		:param name: State ID.
-		:type name: int.
-		:returns: str -- the HTML view output.
-	"""
-
-	thisQuery = Query('system_tenure', state_id)
-	thisQuery.send_query()
-	response = thisQuery.pull_result()
-	return render_template('response.html', response=response)
-
+	return jsonify(response)
+	#return render_template('response.html', response=response)
 
 @bp.route('/system_year/<int:year>')
 def system_year(year):
@@ -86,13 +72,32 @@ def system_year(year):
 	this_query = Query('system_year', year)
 	this_query.send_query()
 	response = this_query.pull_result()
-	return render_template('response.html', response=response)
+	return jsonify(response)
+	#return render_template('response.html', response=response)
+
+
+# Major Power Tenure for a Given State
+@bp.route('/major_tenure/<int:state_id>')
+def major_tenure(state_id):
+	""" This function returns a JSON representation
+		response of the Major tenure for a given
+		state (by state_id) and designates any tenure
+		where the state was a Major Power.
+
+		:param name: State ID.
+		:type name: int.
+		:returns: str -- the HTML view output.
+	"""
+
+	thisQuery = Query('major_tenure', state_id)
+	thisQuery.send_query()
+	response = thisQuery.pull_result()
+	return jsonify(response)
+	#return render_template('response.html', response=response)
+
+# TODO: Major Powers by Year
 
 # TODO: Future resources:
-	# - All intra state Wars
-	# - Intrastate wars by ID
-	# - All interstate wars
-	# - Interstate wars by ID
 	# - All extra state wars
 	# - Extrastate wars by ID
 
@@ -107,8 +112,50 @@ def query_nonstate_wars(req_war_id):
 	this_query = Query('nonstate', req_war_id)
 	this_query.send_query()
 	response = this_query.pull_result()
-	return render_template('response.html', response=response)
+	return jsonify(response)
+	#return render_template('response.html', response=response)
 
+@bp.route('/wars/intrastate/', defaults={'req_war_id': None})
+@bp.route('/wars/intrastate/<int:req_war_id>')
+def query_intrastate_wars(req_war_id):
+	""" This function returns a JSON representation
+		response of a intrastate war. If no war_id
+		argument is passed in, then all intrastate wars
+		are returned.
+	"""
+	this_query = Query('intrastate', req_war_id)
+	this_query.send_query()
+	response = this_query.pull_result()
+	return jsonify(response)
+	#return render_template('response.html', response=response)
+
+@bp.route('/wars/interstate/', defaults={'req_war_id': None})
+@bp.route('/wars/interstate/<int:req_war_id>')
+def query_interstate_wars(req_war_id):
+	""" This function returns a JSON representation
+		response of a interstate war. If no war_id
+		argument is passed in, then all interstate wars
+		are returned.
+	"""
+	this_query = Query('interstate', req_war_id)
+	this_query.send_query()
+	response = this_query.pull_result()
+	return jsonify(response)
+	#return render_template('response.html', response=response)
+
+@bp.route('/wars/extrastate/', defaults={'req_war_id': None})
+@bp.route('/wars/extrastate/<int:req_war_id>')
+def query_extrastate_wars(req_war_id):
+	""" This function returns a JSON representation
+		response of a extrastate war. If no war_id
+		argument is passed in, then all extrastate wars
+		are returned.
+	"""
+	this_query = Query('extrastate', req_war_id)
+	this_query.send_query()
+	response = this_query.pull_result()
+	#response = json.dumps(response)
+	return jsonify(response)
 
 
 # TODO: Basic search query string funcionality on each of these endpoints

@@ -26,6 +26,7 @@ class Query:
 				else:
 					thisState.state_name = result['state_name']
 					thisState.state_abbr = result['state_abbr']
+					# Use jsonify here like in /resource/states?
 					self.result_body = {"results": {"State Name" : thisState.state_name, "State ID" : thisState.state_id, "State Abbr": thisState.state_abbr}}
 
 		# Query for the States Resource
@@ -41,7 +42,7 @@ class Query:
 				else:
 					for row in result:
 						self.result_body['results'].append(row)
-				self.result_body = json.dumps(self.result_body)
+				#self.result_body = json.dumps(self.result_body)
 
 		# Query for System Tenure, by state
 		if self.resource_name == 'system_tenure':
@@ -80,6 +81,30 @@ class Query:
 						this_year.system_list.append(system_list_item)
 					self.result_body = {"results": {"year": this_year.year, "system_list": this_year.system_list}}
 
+		# Query for Major Tenure, by state
+		if self.resource_name == 'major_tenure':
+			thisState = State(self.resource_id)
+			db = get_db()
+			with g.db.cursor() as cursor:
+				sql = "SELECT state_name, state_abbr, styear, stmonth, stday, endyear, endmonth, endday FROM `state_codes` INNER JOIN `system_majors_periods` ON state_codes.state_id=system_majors_periods.state_id WHERE state_codes.state_id = %s;" % thisState.state_id
+				cursor.execute(sql)
+				result = cursor.fetchall()
+				if cursor.rowcount == 0:
+					self.result_body = {"results" : "No results"}
+				else:
+					for row in result:
+						thisState.state_name = row['state_name']
+						thisState.state_abbr = row['state_abbr']
+						this_tenure = {"styear": row['styear'], "stmonth": row['stmonth'], "stday": row['stday'], "endyear": row['endyear'], "endmonth": row['endmonth'], "endday": row['endday']}
+						thisState.major_tenure.append(this_tenure)
+						self.result_body = {"results": {"State Name" : thisState.state_name, "State ID" : thisState.state_id, "State Abbr": thisState.state_abbr, "Major Tenure": thisState.major_tenure}}
+
+
+
+		# From here down resource by war type have have their single and
+		# multiple queries folded into one Query object.
+		# TODO: Verify is this is a fesible approach for they above
+		# query functions. 
 		if self.resource_name == 'nonstate':
 			db = get_db()
 			with g.db.cursor() as cursor:
@@ -303,6 +328,7 @@ class State:
 	def __init__(self, state_id, state_name=None, state_abbr=None):
 			self.state_id = state_id
 			self.system_tenure = []
+			self.major_tenure = []
 
 class System_year:
 	def __init__(self, year):

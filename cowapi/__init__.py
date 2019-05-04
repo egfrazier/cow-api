@@ -26,8 +26,8 @@ def create_app(test_config=None):	# Application factory function
 	def basic_info():
 		return 'Welcome to the Correlates of War API.'
 
-	from cowapi.models import db
-	db.init_app(app)
+	#from cowapi.models import db
+	#db.init_app(app)
 
 	from cowapi.views import resources
 	app.register_blueprint(views.resources.bp)
